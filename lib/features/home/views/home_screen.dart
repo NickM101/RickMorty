@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../controllers/home_controller.dart';
+import '../controllers/character_controller.dart';
 
-class RickAndMortyWidget extends HookConsumerWidget {
-  const RickAndMortyWidget({super.key});
+class HomeScreen extends HookConsumerWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -21,10 +21,9 @@ class RickAndMortyWidget extends HookConsumerWidget {
             itemBuilder: (context, index) {
               final character = characters[index];
               return ListTile(
-                // leading: Image.network(character['image']),
-                title: Text(character['name']),
-                subtitle: Text(character['type']),
-                trailing: Text(character['dimension']),
+                title: Text(character.name),
+                subtitle: Text(character.species),
+                trailing: Text(character.status),
               );
             },
           );

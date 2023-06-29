@@ -1,73 +1,13 @@
-import 'package:graphql/client.dart';
+// https://studio.apollographql.com/public/rick-and-morty-a3b90u/variant/current/schema/reference/objects
+// https://www.freecodecamp.org/news/graphql-queries-for-everyone/
+
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-final rickAndMortyServiceProvider = Provider<RickAndMortyService>((ref) {
-  return RickAndMortyService();
+final graphQLClientProvider = Provider<GraphQLClient>((ref) {
+  final Link link = HttpLink('https://rickandmortyapi.com/graphql');
+  return GraphQLClient(
+    link: link,
+    cache: GraphQLCache(),
+  );
 });
-
-class RickAndMortyService {
-  final GraphQLClient _client;
-
-  RickAndMortyService() : _client = _createClient();
-
-  static GraphQLClient _createClient() {
-    final Link link = HttpLink('https://rickandmortyapi.com/graphql');
-    return GraphQLClient(
-      link: link,
-      cache: GraphQLCache(),
-    );
-  }
-
-  Future<QueryResult> getAllCharacters() async {
-    const String query = r'''
-      query GetAllCharacters {
-        characters {
-          results {
-            id
-            name
-            species
-            status
-            image
-            type
-            gender
-          }
-        }
-      }
-    ''';
-
-    final QueryOptions options = QueryOptions(document: gql(query));
-
-    final QueryResult result = await _client.query(options);
-
-    if (result.hasException) {
-      print(result.exception.toString());
-    }
-
-    return result;
-  }
-
-  Future<QueryResult> getAllLocations() async {
-    const String query = r'''
-      query getAllLocations {
-        locations {
-          results {
-            id
-            name
-            type
-            dimension
-          }
-        }
-      }
-    ''';
-
-    final QueryOptions options = QueryOptions(document: gql(query));
-
-    final QueryResult result = await _client.query(options);
-
-    if (result.hasException) {
-      print(result.exception.toString());
-    }
-
-    return result;
-  }
-}
