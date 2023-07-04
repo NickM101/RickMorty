@@ -10,6 +10,15 @@ final characterRepositoryProvider = Provider<CharacterRepository>(
   ),
 );
 
+class CharacterRepositoryException implements Exception {
+  final String message;
+
+  CharacterRepositoryException(this.message);
+
+  @override
+  String toString() => message;
+}
+
 class CharacterRepository {
   final GraphQLClient client;
 
@@ -17,10 +26,10 @@ class CharacterRepository {
     required this.client,
   });
 
-  Future<List<Character>> getAllCharacters() async {
+  Future<List<Character>> getAllCharacters(int page) async {
     const String query = r'''
-      query GetAllCharacters {
-        characters {
+      query GetAllCharacters($page: Int!) {
+        characters(page: $page) {
           results {
             id
             name
@@ -32,8 +41,13 @@ class CharacterRepository {
       }
     ''';
 
-    final List<Character> characters = await _fetchCharacters(query);
-    return characters;
+    try {
+      final List<Character> characters =
+          await _fetchCharacters(query, variables: {'page': page});
+      return characters;
+    } catch (e) {
+      throw CharacterRepositoryException('Failed to fetch characters');
+    }
   }
 
   Future<List<Character>> searchCharacters(String searchQuery) async {
@@ -51,9 +65,13 @@ class CharacterRepository {
       }
     ''';
 
-    final List<Character> characters =
-        await _fetchCharacters(query, variables: {'searchQuery': searchQuery});
-    return characters;
+    try {
+      final List<Character> characters = await _fetchCharacters(query,
+          variables: {'searchQuery': searchQuery});
+      return characters;
+    } catch (e) {
+      throw CharacterRepositoryException('Failed to search characters');
+    }
   }
 
   Future<List<Character>> _fetchCharacters(String query,
@@ -66,7 +84,8 @@ class CharacterRepository {
     final QueryResult result = await client.query(options);
     if (result.hasException) {
       print(result.exception.toString());
-      return [];
+      throw CharacterRepositoryException(
+          'GraphQL error: ${result.exception.toString()}');
     }
 
     final List<dynamic>? rawCharacters =
@@ -77,6 +96,7 @@ class CharacterRepository {
             name: rawCharacter['name'] as String? ?? 'Unknown',
             species: rawCharacter['species'] as String? ?? 'Unknown',
             status: rawCharacter['status'] as String? ?? 'Unknown',
+            image: rawCharacter['image'] as String? ?? 'Unknown',
           );
         }).toList() ??
         [];

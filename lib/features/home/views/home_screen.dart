@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../widgets/character_details.dart';
+import '../widgets/character_image.dart';
+
 import '../controllers/character_controller.dart';
 
 class HomeScreen extends HookConsumerWidget {
@@ -20,10 +23,25 @@ class HomeScreen extends HookConsumerWidget {
             itemCount: characters.length,
             itemBuilder: (context, index) {
               final character = characters[index];
-              return ListTile(
-                title: Text(character.name),
-                subtitle: Text(character.species),
-                trailing: Text(character.status),
+              return Container(
+                margin: const EdgeInsets.fromLTRB(30, 12, 0, 12),
+                child: Stack(
+                  children: [
+                    CharacterImage(
+                      src: character.image,
+                      id: character.name,
+                    ),
+                    Positioned(
+                      right: 20,
+                      bottom: 50,
+                      child: CharacterDetails(
+                        name: character.name,
+                        species: character.species,
+                        status: character.status,
+                      ),
+                    )
+                  ],
+                ),
               );
             },
           );
@@ -34,3 +52,10 @@ class HomeScreen extends HookConsumerWidget {
     );
   }
 }
+
+
+// ListTile(
+//                 title: Text(character.name),
+//                 subtitle: Text(character.species),
+//                 trailing: Text(character.status),
+//               );
