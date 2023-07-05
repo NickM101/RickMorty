@@ -52,10 +52,3 @@ class HomeScreen extends HookConsumerWidget {
     );
   }
 }
-
-
-// ListTile(
-//                 title: Text(character.name),
-//                 subtitle: Text(character.species),
-//                 trailing: Text(character.status),
-//               );

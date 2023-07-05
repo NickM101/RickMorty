@@ -22,6 +22,7 @@ dependencies:
   flutter_riverpod: ^2.3.6
   flutter_hooks: ^0.18.6
   hooks_riverpod: ^2.3.6
+  glass: ^1.0.1+1
 
 dev_dependencies:
   flutter_test:
